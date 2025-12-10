@@ -1,0 +1,21 @@
+# Working directories (not part of framework)
+repos/
+outputs/
+.archive/
+
+# Keep session reviews for sharing (tracked)
+!outputs/session_reviews/
+
+# Local settings (personal env, model preferences)
+.claude/settings.local.json
+
+# Environment and caches
+.env
+.env.local
+*.pyc
+__pycache__/
+node_modules/
+.DS_Store
+
+# Working files (not part of framework)
+IMPROVEMENTS.md

@@ -1,0 +1,75 @@
+# Repository Catalog for SAEF
+#
+# Minimal catalog for repo discovery. Team ownership is sourced from
+# CODEOWNERS in each repository - do not duplicate that info here.
+#
+# To find owners: cat repos/<repo>/.github/CODEOWNERS
+
+repositories:
+  # Frontend
+  - name: user-console-monorepo
+    clone_url: git@github.com:soracom/user-console-monorepo.git
+    description: Customer-facing console (JP/EN)
+    triggers: [user-console, customer-ui, sim-management, billing-ui]
+
+  - name: soracom-internal-console-monorepo
+    clone_url: git@github.com:soracom/soracom-internal-console-monorepo.git
+    description: Internal staff console
+    triggers: [internal-console, internal-ui, cre-tools, support-ops]
+
+  - name: soracom-internal-console-api
+    clone_url: git@github.com:soracom/soracom-internal-console-api.git
+    description: Backend API for internal console (ARCHIVED - DO NOT USE)
+    triggers: [internal-console, internal-api]
+    archived: true
+
+  # API Layer
+  - name: soracom-api
+    clone_url: git@github.com:soracom/soracom-api.git
+    description: OpenAPI definitions (public + internal)
+    triggers: [api-definition, new-endpoint, openapi]
+
+  - name: soracom-api-gateway
+    clone_url: git@github.com:soracom/soracom-api-gateway.git
+    description: API gateway routing
+    triggers: [api-routing, gateway]
+
+  # Core Backend
+  - name: billing
+    clone_url: git@github.com:soracom/billing.git
+    description: Billing and payment processing
+    triggers: [billing, invoicing, subscription, payment]
+
+  - name: auth-manager
+    clone_url: git@github.com:soracom/auth-manager.git
+    description: Authentication and authorization
+    triggers: [auth, permissions, rbac, sam-users]
+
+  - name: session-manager
+    clone_url: git@github.com:soracom/session-manager.git
+    description: SIM session management
+    triggers: [session, vpg, device-sessions]
+
+  # Documentation
+  - name: website-users
+    clone_url: git@github.com:soracom/website-users.git
+    description: Japanese user documentation
+    triggers: [docs-ja, user-guide]
+
+  - name: website-developers
+    clone_url: git@github.com:soracom/website-developers.git
+    description: English developer documentation
+    triggers: [docs-en, developer-guide, api-docs]
+
+  - name: changelog
+    clone_url: git@github.com:soracom/changelog.git
+    description: Public changelog (changelog.soracom.io)
+    triggers: [changelog, release-notes]
+
+# Common repo combinations for feature types
+discovery_rules:
+  customer_ui: [user-console-monorepo, soracom-api]
+  internal_ui: [soracom-internal-console-monorepo]  # Note: soracom-internal-console-api is archived
+  api_feature: [soracom-api, soracom-api-gateway]
+  billing_feature: [billing, soracom-api]
+  auth_feature: [auth-manager, soracom-api]

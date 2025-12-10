@@ -1,0 +1,55 @@
+{
+  "$schema": "https://json.schemastore.org/claude-code-settings.json",
+  "permissions": {
+    "allow": [
+      "Bash(cat:*)",
+      "Bash(ls:*)",
+      "Bash(tree:*)",
+      "Bash(find:*)",
+      "Bash(head:*)",
+      "Bash(wc:*)",
+      "Bash(grep:*)",
+      "Bash(mkdir:*)",
+      "Bash(echo:*)",
+      "Bash(git status:*)",
+      "Bash(git log:*)",
+      "Bash(git diff:*)",
+      "Bash(git rev-parse:*)",
+      "Bash(git config:*)",
+      "Bash(git branch:*)",
+      "Bash(git checkout:*)",
+      "Bash(git clone:*)",
+      "Bash(gh pr:*)",
+      "Bash(gh repo:*)",
+      "Bash(.claude/skills/saef-ops/scripts/init-feature.sh:*)",
+      "Bash(.claude/skills/saef-ops/scripts/check-context.sh:*)",
+      "Bash(.claude/skills/saef-ops/scripts/list-features.sh:*)",
+      "Bash(.claude/skills/saef-ops/scripts/validate-quality-checklist.sh:*)",
+      "Bash(.claude/skills/saef-ops/scripts/generate-screenshots.sh:*)",
+      "Bash(.claude/skills/saef-ops/scripts/annotate_screenshot.py:*)"
+    ],
+    "deny": []
+  },
+  "hooks": {
+    "PostToolUse": [
+      {
+        "matcher": "Edit|Write",
+        "hooks": [
+          {
+            "type": "command",
+            "command": ".claude/hooks/markdown_formatter.py"
+          }
+        ]
+      },
+      {
+        "matcher": "SlashCommand",
+        "hooks": [
+          {
+            "type": "command",
+            "command": ".claude/hooks/check_context_guardrail.sh"
+          }
+        ]
+      }
+    ]
+  }
+}
