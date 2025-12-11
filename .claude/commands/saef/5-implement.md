@@ -66,6 +66,58 @@ If any repository is archived:
 2. Alert the user that the repo is archived
 3. Ask for migration strategy or alternative implementation approach
 
+## Step 2.5: Research and Verify Assumptions
+
+**CRITICAL**: Before writing code, research the codebase to verify technical assumptions.
+
+### Research existing patterns:
+
+```bash
+# Find similar implementations
+cd repos/<affected-repo>
+git log --all --oneline --grep="<similar feature>" | head -10
+gh pr list --search "<similar feature>" --state merged --limit 5
+```
+
+### Verify data models and sources:
+
+- Read existing model classes to understand data structures
+- Check test data builders to see what fields are available
+- Validate assumptions against actual code, not documentation
+
+### Document findings in implementation notes:
+
+Create `outputs/<slug>/5-implementation-notes.md`:
+
+```markdown
+# Implementation Notes
+
+## Research Findings
+
+### Data Models Verified
+- GlobalSIMCardManagement has puk1/puk2 fields (source: GlobalSIMCardManagementBuilder.java:39)
+- SIMCardManagement has passCode field (source: SIMCardManagementBuilder.java:51)
+
+### Similar Features
+- Feature X implemented in PR #123 (provides pattern for error handling)
+- Feature Y shows test data setup in SubscriberBuilder.java
+
+## Assumptions Validated
+- ✅ Global coverage SIMs use PUK codes (verified in test data)
+- ❌ JP coverage SIMs use PassCode, NOT PUK (verified in SIMCardManagement model)
+
+## Open Questions
+- [ ] Does feature require localization?
+- [ ] Are there edge cases not covered in test data?
+```
+
+### Anti-patterns to avoid:
+
+- **DON'T** use try-catch blocks to swallow exceptions silently
+- **DON'T** write tests without verifying test data exists
+- **DON'T** hardcode values that should be configuration
+- **DON'T** make assumptions about data models without verification
+
 ## Step 3: Implement Code
 
 Follow tasks from `4-tasks.md`. Mark each task complete as you finish:
@@ -82,6 +134,37 @@ Follow `3-test-plan.md`:
 - Unit tests
 - Integration tests
 - E2E tests (Root + SAM users)
+
+### CRITICAL: Validate Test Data Before Writing Tests
+
+Before writing any test, verify that test data exists:
+
+```bash
+# Search for test data builders
+find repos/<repo> -name "*Builder.java" -path "*/test/*" -o -path "*/dynamodb/*"
+
+# Check if test data exists for your test IDs
+grep -r "testImsi\|testIccid\|testOperatorId" repos/<repo>/*/test/
+```
+
+**For each test:**
+1. Identify the test data IDs you'll use (IMSI, ICCID, operator ID, etc.)
+2. Verify those IDs exist in test data builders
+3. If missing, add test data to the builder FIRST
+4. Then write the test
+
+**Example - Adding test data:**
+
+```java
+// In SubscriberBuilder.java
+{
+  Subscriber subscriber = new Subscriber();
+  subscriber.setImsi("295059990045088");  // Match test expectation
+  subscriber.setIccid(ICCID.numberPartOf("894230571711400043").getValue());
+  // ... set other required fields
+  dynamoDBMapper.save(subscriber);
+}
+```
 
 ## Step 5: Local Validation
 
@@ -145,6 +228,7 @@ For each repo with changes, create `outputs/<slug>/5-pr-descriptions/pr-<repo>.m
 - [API Spec](../../../../saef/outputs/<slug>/3-api-spec.yaml)
 - [Test Plan](../../../../saef/outputs/<slug>/3-test-plan.md)
 - [Tasks](../../../../saef/outputs/<slug>/4-tasks.md)
+- [Implementation Notes](../../../../saef/outputs/<slug>/5-implementation-notes.md)
 
 **PR Labels** (to be applied):
 - `saef:generated`
@@ -189,6 +273,7 @@ If user chooses (a) and GitHub is authenticated:
 ## Output
 
 - Code in `repos/<repo>/` (local branches, not pushed)
+- `outputs/<slug>/5-implementation-notes.md` (research findings and verified assumptions)
 - `outputs/<slug>/5-quality-checklist.md`
 - `outputs/<slug>/5-pr-descriptions/pr-<repo>.md`
 - Updated `outputs/<slug>/4-tasks.md` (tasks marked complete)
