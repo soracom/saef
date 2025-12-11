@@ -18,6 +18,7 @@ SAEF is an AI-assisted feature development framework that guides features from i
 - [Skills Reference](#skills-reference)
 - [Hooks](#hooks)
 - [Test Scenarios](#test-scenarios)
+- [Test History](#test-history)
 - [Future Directions](#future-directions)
 - [Contributing](#contributing)
 
@@ -338,13 +339,45 @@ Sample feature ideas for validating the workflow.
 
 ---
 
+## Test History
+
+Real-world features implemented using SAEF to track improvements over time.
+
+| Feature | PR | Status | Commits Before Review | Post-Review Commits | Notes |
+|---------|-----|--------|----------------------|---------------------|-------|
+| Display PUK on Subscriber Page | [#548](https://github.com/soracom/soracom-internal-console-monorepo/pull/548) | Open | 1 | 3 | Initial implementation + fixes for: compilation error (invalid enum), JP coverage support, test data |
+
+**Tracking Metrics**:
+- **Commits Before Review**: Initial implementation before first human review
+- **Post-Review Commits**: Additional commits addressing reviewer feedback and CI failures
+- **Goal**: Reduce post-review commits as SAEF improves through better research, test data validation, and pattern learning
+
+**System Improvements Applied** (based on this PR):
+- Added Step 2.5 to `/saef:5-implement`: Research and verify assumptions before coding
+- Added Step 4 validation: Check test data exists before writing tests
+- Updated anti-patterns list: No error swallowing, no hardcoded values, verify data models
+
+---
+
 ## Future Directions
 
 Ideas under consideration for future development.
 
+### Near-Term Enhancements
+
+- **PR Feedback Agent**: Automated response to PR reviews and CI/CD failures
+  - Monitor SAEF-labeled PRs for reviewer comments and build failures
+  - Auto-fix compilation errors by researching valid patterns in codebase
+  - Generate missing test data based on failure analysis
+  - Respond to reviewer questions with code citations and sources
+  - Requires read-only AWS access (CodeBuild logs, DynamoDB schemas, CloudWatch)
+  - See [enhancement proposal](docs/enhancements/pr-feedback-agent.md) for details
 - Slack bot or MCP server: Make `/saef:1-refine` available as a Slack bot or MCP server so people can capture feature ideas without needing Claude Code or an IDE
 - MCP server integration: Connect to ProductBoard, Shortcut, Slack, and GitHub for context retrieval
 - Claude rule system: Explore using Claude's rule system for additional context and guardrails
+
+### Medium-Term Research
+
 - PR feedback analysis: Review recent PRs to learn from implemented features and incorporate feedback patterns into guidance
 - Backtesting validation: Check out pre-merge branch states, run SAEF with same prompts, compare output against actual implementations to validate system quality without real-time use
 - Parallel implementation: Run implementation across multiple repos concurrently
